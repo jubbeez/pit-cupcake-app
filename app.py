@@ -9,12 +9,10 @@ app.secret_key = "cupcake_secret"
 # BANCO DE DADOS
 # -----------------------
 
-# Função que abre conexão com o banco
 def get_db():
     conn = sqlite3.connect("cupcakes.db")
     return conn
 
-# Criar tabela e adicionar itens iniciais se não existirem
 def init_db():
     conn = get_db()
     cursor = conn.cursor()
@@ -29,7 +27,6 @@ def init_db():
         )
     """)
 
-    # Verificar se já existem cupcakes
     cursor.execute("SELECT COUNT(*) FROM cupcakes")
     count = cursor.fetchone()[0]
 
@@ -51,14 +48,12 @@ def init_db():
         )
         conn.commit()
 
-    # fechar a conexão
     conn.close()
 
-# chama a inicialização do DB (deixe isso aqui)
 init_db()
 
 # -----------------------
-# ROTAS PRINCIPAIS
+# ROTAS
 # -----------------------
 
 @app.route("/")
@@ -67,7 +62,7 @@ def index():
 
 @app.route("/catalogo")
 def catalogo():
-    conn = sqlite3.connect("cupcakes.db")
+    conn = get_db()
     c = conn.cursor()
     c.execute("SELECT * FROM cupcakes")
     cupcakes = c.fetchall()
@@ -75,20 +70,21 @@ def catalogo():
     return render_template("catalog.html", cupcakes=cupcakes)
 
 # -----------------------
-# CRUD CUPCAKES
+# CRUD
 # -----------------------
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if request.method == "POST":
-        nome = request.form["nome"]
-        preco = request.form["preco"]
-        descricao = request.form["descricao"]
+        name = request.form["nome"]
+        price = float(request.form["preco"])
+        description = request.form["descricao"]
+        image_url = request.form["imagem"]
 
-        conn = sqlite3.connect("cupcakes.db")
+        conn = get_db()
         c = conn.cursor()
-        c.execute("INSERT INTO cupcakes (nome, preco, descricao) VALUES (?, ?, ?)",
-                  (nome, preco, descricao))
+        c.execute("INSERT INTO cupcakes (name, description, price, image_url) VALUES (?, ?, ?, ?)",
+                  (name, description, price, image_url))
         conn.commit()
         conn.close()
 
@@ -98,18 +94,19 @@ def add():
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
-    conn = sqlite3.connect("cupcakes.db")
+    conn = get_db()
     c = conn.cursor()
     c.execute("SELECT * FROM cupcakes WHERE id = ?", (id,))
     cupcake = c.fetchone()
 
     if request.method == "POST":
-        nome = request.form["nome"]
-        preco = request.form["preco"]
-        descricao = request.form["descricao"]
+        name = request.form["nome"]
+        price = float(request.form["preco"])
+        description = request.form["descricao"]
+        image_url = request.form["imagem"]
 
-        c.execute("UPDATE cupcakes SET nome=?, preco=?, descricao=? WHERE id=?",
-                  (nome, preco, descricao, id))
+        c.execute("UPDATE cupcakes SET name=?, description=?, price=?, image_url=? WHERE id=?",
+                  (name, description, price, image_url, id))
         conn.commit()
         conn.close()
         return redirect(url_for("catalogo"))
@@ -119,7 +116,7 @@ def edit(id):
 
 @app.route("/delete/<int:id>")
 def delete(id):
-    conn = sqlite3.connect("cupcakes.db")
+    conn = get_db()
     c = conn.cursor()
     c.execute("DELETE FROM cupcakes WHERE id=?", (id,))
     conn.commit()
@@ -130,19 +127,21 @@ def delete(id):
 # CARRINHO
 # -----------------------
 
-@app.route("/add_to_cart/<int:id>")
+@app.route("/add_to_cart/<int:id>", methods=["POST"])
 def add_to_cart(id):
     if "cart" not in session:
         session["cart"] = []
+
     session["cart"].append(id)
-    return redirect(url_for("catalogo"))
+    session.modified = True
+    return redirect("/cart")
 
 @app.route("/cart")
 def cart():
     if "cart" not in session:
         session["cart"] = []
 
-    conn = sqlite3.connect("cupcakes.db")
+    conn = get_db()
     c = conn.cursor()
 
     itens = []
@@ -153,7 +152,7 @@ def cart():
         item = c.fetchone()
         if item:
             itens.append(item)
-            total += item[2]
+            total += item[3]  # preço está na posição 3
 
     conn.close()
     return render_template("cart.html", itens=itens, total=total)
