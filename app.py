@@ -9,20 +9,42 @@ app.secret_key = "cupcake_secret"
 # BANCO DE DADOS
 # -----------------------
 
+# Criar tabela e adicionar itens iniciais se não existirem
 def init_db():
-    if not os.path.exists("cupcakes.db"):
-        conn = sqlite3.connect("cupcakes.db")
-        c = conn.cursor()
-        c.execute("""
-        CREATE TABLE cupcakes (
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS cupcakes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            preco REAL NOT NULL,
-            descricao TEXT
+            name TEXT NOT NULL,
+            description TEXT,
+            price REAL,
+            image_url TEXT
         )
-        """)
+    """)
+
+    # Verificar se já existem cupcakes
+    cursor.execute("SELECT COUNT(*) FROM cupcakes")
+    count = cursor.fetchone()[0]
+
+    if count == 0:
+        cupcakes = [
+            ("Cupcake Red Velvet", "Cobertura de cream cheese e massa macia.", 12.90,
+             "https://images.unsplash.com/photo-1608198093002-ad4e005484b4"),
+            ("Cupcake Chocolate", "Massa de chocolate com ganache cremoso.", 10.50,
+             "https://images.unsplash.com/photo-1599785209707-28f1d4a57c7f"),
+            ("Cupcake Baunilha", "Sabor clássico com cobertura suave de baunilha.", 9.90,
+             "https://images.unsplash.com/photo-1563805042-7684c019e1cb"),
+            ("Cupcake Morango", "Massa leve com topping natural de morango.", 11.50,
+             "https://images.unsplash.com/photo-1612197535732-5df2c22e3de0"),
+        ]
+
+        cursor.executemany(
+            "INSERT INTO cupcakes (name, description, price, image_url) VALUES (?, ?, ?, ?)",
+            cupcakes
+        )
         conn.commit()
-        conn.close()
 
 init_db()
 
