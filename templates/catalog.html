@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Catálogo</h2>
+
+<h2>Catálogo de Cupcakes</h2>
 
 <div class="grid">
-    {% for c in cupcakes %}
+    {% for cupcake in cupcakes %}
     <div class="card">
-        <h3>{{ c[1] }}</h3>
-        <p>{{ c[3] }}</p>
-        <strong>R$ {{ "%.2f"|format(c[2]) }}</strong><br><br>
+        <img src="{{ cupcake[4] }}" alt="Cupcake">
 
-        <a href="/add_to_cart/{{ c[0] }}">Adicionar ao carrinho</a><br>
-        <a href="/edit/{{ c[0] }}">Editar</a> |
-        <a href="/delete/{{ c[0] }}">Excluir</a>
+        <h3>{{ cupcake[1] }}</h3>
+
+        <p>{{ cupcake[2] }}</p>
+
+        <p class="price">R$ {{ cupcake[3] }}</p>
+
+        <form action="/add_to_cart/{{ cupcake[0] }}" method="post">
+            <button>Adicionar ao Carrinho</button>
+        </form>
     </div>
     {% endfor %}
 </div>
