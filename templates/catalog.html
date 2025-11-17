@@ -1,21 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Catálogo de Cupcakes</h2>
+<h2>Catálogo de Cupcakes 🧁</h2>
 
 <div class="grid">
-    {% for cupcake in cupcakes %}
+    {% for cup in cupcakes %}
     <div class="card">
-        <img src="{{ cupcake[4] }}" alt="Cupcake">
+        <img src="{{ cup[4] }}" alt="{{ cup[1] }}">
 
-        <h3>{{ cupcake[1] }}</h3>
+        <h3>{{ cup[1] }}</h3>
+        <p>{{ cup[2] }}</p>
+        <strong>R$ {{ "%.2f"|format(cup[3]) }}</strong>
 
-        <p>{{ cupcake[2] }}</p>
-
-        <p class="price">R$ {{ cupcake[3] }}</p>
-
-        <form action="/add_to_cart/{{ cupcake[0] }}" method="post">
-            <button>Adicionar ao Carrinho</button>
+        <form action="{{ url_for('add_to_cart', id=cup[0]) }}" method="POST">
+            <button type="submit">Adicionar ao carrinho</button>
         </form>
     </div>
     {% endfor %}
