@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Editar Cupcake</h2>
+
+<form method="POST">
+    Nome: <input type="text" name="nome" value="{{ cupcake[1] }}" required>
+    Preço: <input type="number" step="0.01" name="preco" value="{{ cupcake[2] }}" required>
+    Descrição: <textarea name="descricao">{{ cupcake[3] }}</textarea>
+    <button type="submit">Atualizar</button>
+</form>
+
+{% endblock %}
