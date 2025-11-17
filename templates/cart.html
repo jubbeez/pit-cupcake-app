@@ -1,18 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Carrinho</h2>
 
-{% if itens %}
-<ul>
-    {% for item in itens %}
-    <li>{{ item[1] }} — R$ {{ "%.2f"|format(item[2]) }}</li>
-    {% endfor %}
-</ul>
+<h2>Seu Carrinho 🛒</h2>
 
-<h3>Total: R$ {{ "%.2f"|format(total) }}</h3>
-
-<a href="/checkout">Finalizar compra</a>
+{% if itens|length == 0 %}
+    <p>Seu carrinho está vazio.</p>
 {% else %}
-<p>Seu carrinho está vazio.</p>
+    <ul>
+    {% for item in itens %}
+        <li>
+            <strong>{{ item[1] }}</strong> — 
+            R$ {{ '%.2f'|format(item[3]) }}
+        </li>
+    {% endfor %}
+    </ul>
+
+    <h3>Total: R$ {{ '%.2f'|format(total) }}</h3>
+
+    <a href="/checkout">
+        <button>Finalizar Pedido</button>
+    </a>
 {% endif %}
+
 {% endblock %}
