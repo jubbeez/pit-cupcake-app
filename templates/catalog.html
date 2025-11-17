@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Catálogo</h2>
+
+<div class="grid">
+    {% for c in cupcakes %}
+    <div class="card">
+        <h3>{{ c[1] }}</h3>
+        <p>{{ c[3] }}</p>
+        <strong>R$ {{ "%.2f"|format(c[2]) }}</strong><br><br>
+
+        <a href="/add_to_cart/{{ c[0] }}">Adicionar ao carrinho</a><br>
+        <a href="/edit/{{ c[0] }}">Editar</a> |
+        <a href="/delete/{{ c[0] }}">Excluir</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
