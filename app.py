@@ -9,6 +9,11 @@ app.secret_key = "cupcake_secret"
 # BANCO DE DADOS
 # -----------------------
 
+# Função que abre conexão com o banco
+def get_db():
+    conn = sqlite3.connect("cupcakes.db")
+    return conn
+
 # Criar tabela e adicionar itens iniciais se não existirem
 def init_db():
     conn = get_db()
@@ -46,6 +51,10 @@ def init_db():
         )
         conn.commit()
 
+    # fechar a conexão
+    conn.close()
+
+# chama a inicialização do DB (deixe isso aqui)
 init_db()
 
 # -----------------------
