@@ -77,57 +77,25 @@ def catalogo():
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if request.method == "POST":
-        name = request.form["nome"]
-        price = float(request.form["preco"])
-        description = request.form["descricao"]
-        image_url = request.form["imagem"]
+        nome = request.form["nome"]
+        preco = float(request.form["preco"])
+        descricao = request.form["descricao"]
+        imagem = request.form.get("imagem", "/static/images/default.jpg")  # opcional
 
-        conn = get_db()
+        conn = sqlite3.connect("cupcakes.db")
         c = conn.cursor()
+
         c.execute("""
-            INSERT INTO cupcakes (name, description, price, image_url)
+            INSERT INTO cupcakes (name, price, description, image_url)
             VALUES (?, ?, ?, ?)
-        """, (name, description, price, image_url))
+        """, (nome, preco, descricao, imagem))
+
         conn.commit()
         conn.close()
 
         return redirect(url_for("catalogo"))
 
     return render_template("add.html")
-
-@app.route("/edit/<int:id>", methods=["GET","POST"])
-def edit(id):
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("SELECT * FROM cupcakes WHERE id = ?", (id,))
-    cupcake = c.fetchone()
-
-    if request.method == "POST":
-        name = request.form["nome"]
-        price = float(request.form["preco"])
-        description = request.form["descricao"]
-        image_url = request.form["imagem"]
-
-        c.execute("""
-            UPDATE cupcakes 
-            SET name=?, description=?, price=?, image_url=?
-            WHERE id=?
-        """, (name, description, price, image_url, id))
-        conn.commit()
-        conn.close()
-        return redirect(url_for("catalogo"))
-
-    conn.close()
-    return render_template("edit.html", cupcake=cupcake)
-
-@app.route("/delete/<int:id>")
-def delete(id):
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("DELETE FROM cupcakes WHERE id=?", (id,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for("catalogo"))
 
 # ----------------------------------------
 # CARRINHO
