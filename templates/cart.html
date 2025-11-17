@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Carrinho</h2>
+
+{% if itens %}
+<ul>
+    {% for item in itens %}
+    <li>{{ item[1] }} — R$ {{ "%.2f"|format(item[2]) }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Total: R$ {{ "%.2f"|format(total) }}</h3>
+
+<a href="/checkout">Finalizar compra</a>
+{% else %}
+<p>Seu carrinho está vazio.</p>
+{% endif %}
+{% endblock %}
