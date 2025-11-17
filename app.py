@@ -1,13 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
-import os
 
 app = Flask(__name__)
 app.secret_key = "cupcake_secret"
 
-# -----------------------
+# ----------------------------------------
 # BANCO DE DADOS
-# -----------------------
+# ----------------------------------------
 
 def get_db():
     conn = sqlite3.connect("cupcakes.db")
@@ -15,9 +14,9 @@ def get_db():
 
 def init_db():
     conn = get_db()
-    cursor = conn.cursor()
+    c = conn.cursor()
 
-    cursor.execute("""
+    c.execute("""
         CREATE TABLE IF NOT EXISTS cupcakes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -27,8 +26,9 @@ def init_db():
         )
     """)
 
-    cursor.execute("SELECT COUNT(*) FROM cupcakes")
-    count = cursor.fetchone()[0]
+    # verifica se já existem registros
+    c.execute("SELECT COUNT(*) FROM cupcakes")
+    count = c.fetchone()[0]
 
     if count == 0:
         cupcakes = [
@@ -42,19 +42,20 @@ def init_db():
              "/static/images/strawberry.jpg"),
         ]
 
-        cursor.executemany(
-            "INSERT INTO cupcakes (name, description, price, image_url) VALUES (?, ?, ?, ?)",
-            cupcakes
-        )
+        c.executemany("""
+            INSERT INTO cupcakes (name, description, price, image_url)
+            VALUES (?, ?, ?, ?)
+        """, cupcakes)
+
         conn.commit()
 
     conn.close()
 
 init_db()
 
-# -----------------------
-# ROTAS
-# -----------------------
+# ----------------------------------------
+# ROTAS PRINCIPAIS
+# ----------------------------------------
 
 @app.route("/")
 def index():
@@ -69,9 +70,9 @@ def catalogo():
     conn.close()
     return render_template("catalog.html", cupcakes=cupcakes)
 
-# -----------------------
+# ----------------------------------------
 # CRUD
-# -----------------------
+# ----------------------------------------
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
@@ -83,8 +84,10 @@ def add():
 
         conn = get_db()
         c = conn.cursor()
-        c.execute("INSERT INTO cupcakes (name, description, price, image_url) VALUES (?, ?, ?, ?)",
-                  (name, description, price, image_url))
+        c.execute("""
+            INSERT INTO cupcakes (name, description, price, image_url)
+            VALUES (?, ?, ?, ?)
+        """, (name, description, price, image_url))
         conn.commit()
         conn.close()
 
@@ -92,7 +95,7 @@ def add():
 
     return render_template("add.html")
 
-@app.route("/edit/<int:id>", methods=["GET", "POST"])
+@app.route("/edit/<int:id>", methods=["GET","POST"])
 def edit(id):
     conn = get_db()
     c = conn.cursor()
@@ -105,8 +108,11 @@ def edit(id):
         description = request.form["descricao"]
         image_url = request.form["imagem"]
 
-        c.execute("UPDATE cupcakes SET name=?, description=?, price=?, image_url=? WHERE id=?",
-                  (name, description, price, image_url, id))
+        c.execute("""
+            UPDATE cupcakes 
+            SET name=?, description=?, price=?, image_url=?
+            WHERE id=?
+        """, (name, description, price, image_url, id))
         conn.commit()
         conn.close()
         return redirect(url_for("catalogo"))
@@ -123,9 +129,9 @@ def delete(id):
     conn.close()
     return redirect(url_for("catalogo"))
 
-# -----------------------
+# ----------------------------------------
 # CARRINHO
-# -----------------------
+# ----------------------------------------
 
 @app.route("/add_to_cart/<int:id>", methods=["POST"])
 def add_to_cart(id):
@@ -152,7 +158,7 @@ def cart():
         item = c.fetchone()
         if item:
             itens.append(item)
-            total += item[3]  # preço está na posição 3
+            total += item[3]  # índice certo do preço
 
     conn.close()
     return render_template("cart.html", itens=itens, total=total)
