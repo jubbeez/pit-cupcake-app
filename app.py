@@ -33,13 +33,13 @@ def init_db():
     if count == 0:
         cupcakes = [
             ("Cupcake Red Velvet", "Cobertura de cream cheese e massa macia.", 12.90,
-             "https://images.unsplash.com/photo-1608198093002-ad4e005484b4"),
+             "/static/images/redvelvet.jpg"),
             ("Cupcake Chocolate", "Massa de chocolate com ganache cremoso.", 10.50,
-             "https://images.unsplash.com/photo-1599785209707-28f1d4a57c7f"),
+             "/static/images/chocolate.jpg"),
             ("Cupcake Baunilha", "Sabor clássico com cobertura suave de baunilha.", 9.90,
-             "https://images.unsplash.com/photo-1563805042-7684c019e1cb"),
+             "/static/images/vanilla.jpg"),
             ("Cupcake Morango", "Massa leve com topping natural de morango.", 11.50,
-             "https://images.unsplash.com/photo-1612197535732-5df2c22e3de0"),
+             "/static/images/strawberry.jpg"),
         ]
 
         cursor.executemany(
