@@ -10,8 +10,6 @@ Uma aplicação web simples desenvolvida com **Flask** para gerenciar um catálo
 
 - Exibição de catálogo com cupcakes (nome, descrição e preço)  
 - Adição de novos cupcakes  
-- Edição de cupcakes existentes  
-- Exclusão de cupcakes  
 - Carrinho simples com adição de itens  
 - Checkout simulado (limpa o carrinho e apresenta confirmação)  
 
