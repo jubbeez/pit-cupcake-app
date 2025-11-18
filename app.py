@@ -93,7 +93,7 @@ def add():
         conn.commit()
         conn.close()
 
-    @app.route("/delete/<int:id>", methods=["POST"])
+    @app.route("/delete/<int:id>", methods=["DELETE"])
     def delete(id):
         conn = sqlite3.connect("cupcakes.db")
         c = conn.cursor()
