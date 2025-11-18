@@ -15,6 +15,11 @@
         <form action="{{ url_for('add_to_cart', id=cup[0]) }}" method="POST">
             <button type="submit">Adicionar ao carrinho</button>
         </form>
+
+        <form action="{{ url_for('delete', id=cup[0]) }}" method="POST">
+        <button class="delete-btn" type="submit">Remover</button>
+        </form>
+
     </div>
     {% endfor %}
 </div>
