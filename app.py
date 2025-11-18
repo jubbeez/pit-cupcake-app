@@ -93,6 +93,16 @@ def add():
         conn.commit()
         conn.close()
 
+    @app.route("/delete/<int:id>", methods=["POST"])
+    def delete(id):
+        conn = sqlite3.connect("cupcakes.db")
+        c = conn.cursor()
+        c.execute("DELETE FROM cupcakes WHERE id=?", (id,))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("catalogo"))
+
+
         return redirect(url_for("catalogo"))
 
     return render_template("add.html")
