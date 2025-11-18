@@ -90,3 +90,17 @@ button {
 button:hover {
     background: #000;
 }
+
+.delete-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px;
+    margin-top: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #d93636;
+}
