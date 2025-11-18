@@ -12,6 +12,14 @@
             <strong>{{ item[1] }}</strong> — 
             R$ {{ '%.2f'|format(item[3]) }}
         </li>
+        <li>
+            {{ item[1] }} — R$ {{ "%.2f"|format(item[3]) }}
+
+            <form action="{{ url_for('remove_from_cart', id=item[0]) }}" method="POST" style="display:inline;">
+            <button type="submit">Remover</button>
+            </form>
+        </li>
+
     {% endfor %}
     </ul>
 
