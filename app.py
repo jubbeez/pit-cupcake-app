@@ -110,6 +110,13 @@ def add_to_cart(id):
     session.modified = True
     return redirect("/cart")
 
+@app.route("/remove_from_cart/<int:id>", methods=["POST"])
+def remove_from_cart(id):
+    if "cart" in session:
+        session["cart"] = [item for item in session["cart"] if item != id]
+        session.modified = True
+    return redirect("/cart")
+
 @app.route("/cart")
 def cart():
     if "cart" not in session:
