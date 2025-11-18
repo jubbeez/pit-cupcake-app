@@ -123,8 +123,9 @@ def add_to_cart(id):
 @app.route("/remove_from_cart/<int:id>", methods=["POST"])
 def remove_from_cart(id):
     if "cart" in session:
-        session["cart"] = [item for item in session["cart"] if item != id]
-        session.modified = True
+        if id in session["cart"]:
+            session["cart"].remove(id)
+            session.modified = True
     return redirect("/cart")
 
 @app.route("/cart")
